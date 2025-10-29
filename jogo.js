@@ -10,7 +10,7 @@ function fazerLogin() {
 
     if (user === "Tauane" && pass === "0000") {
         mostrarTela('jogos');
-        window.location.href='teste.html';
+        
     } else {
 
         erro.textContent = "Usuário ou senha inválidos!";

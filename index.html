@@ -1,52 +1,84 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameZone</title>
+    <title>PowerGame</title>
     <link rel="stylesheet" href="jogo.css">
 </head>
 <body>
+
     <!-- Tela Inicial -->
     <section id="inicio" class="tela ativa">
-        <h1>🎮 Bem-vindo ao PowerGame</h1>
-        <p>O melhor lugar para se divertir com seus jogos favoritos!</p>
+        <h1>🎮 PowerGame</h1>
         <button onclick="mostrarTela('login')">Entrar</button>
+        <button onclick="mostrarTela('cadastro')">Cadastrar</button>
+    </section>
+
+    <!-- Tela de Cadastro -->
+    <section id="cadastro" class="tela">
+        <h2>Cadastro</h2>
+        <input type="text" id="nomeCadastro" placeholder="Nome completo">
+        <input type="email" id="emailCadastro" placeholder="Email">
+        <input type="password" id="senhaCadastro" placeholder="Senha">
+        <input type="password" id="confirmSenhaCadastro" placeholder="Confirmar senha">
+        <p id="erroCadastro"></p>
+        <button onclick="fazerCadastro()">Criar Conta</button>
+        <button class="voltar" onclick="mostrarTela('inicio')">Voltar</button>
     </section>
 
     <!-- Tela de Login -->
     <section id="login" class="tela">
         <h2>Login</h2>
-        <input type="text" id="usuario" placeholder="Usuário">
-        <input type="password" id="senha" placeholder="Senha">
-        <button onclick="fazerLogin()">Acessar</button>
+        <input type="email" id="usuarioLogin" placeholder="Email">
+        <input type="password" id="senhaLogin" placeholder="Senha">
         <p id="erroLogin"></p>
+        <button onclick="fazerLogin()">Acessar</button>
         <button class="voltar" onclick="mostrarTela('inicio')">Voltar</button>
     </section>
 
     <!-- Tela de Jogos -->
     <section id="jogos" class="tela">
-        <h2>Escolha um jogo</h2>
+        <h2>Escolha seu Jogo</h2>
+
         <div class="lista-jogos">
             <div class="card">
-                <img src="https://picsum.photos/200/120?1" alt="Jogo 1">
-                <h3>Corrida Maluca</h3>
-                <button onclick="alert('Abrindo Corrida Maluca...')">Jogar</button>
+                <img src="https://i.postimg.cc/3NQHqJx6/corrida.jpg">
+                <h3>Moto X3M</h3>
+                <button onclick="carregarJogo('https://www.crazygames.com/embed/moto-x3m', 'audio1')">Jogar</button>
             </div>
             <div class="card">
-                <img src="https://picsum.photos/200/120?2" alt="Jogo 2">
-                <h3>Guerra Espacial</h3>
-                <button onclick="alert('Abrindo Guerra Espacial...')">Jogar</button>
+                <img src="https://wallpapercave.com/wp/wp7150487.jpg">
+                <h3>Subway Surfers</h3>
+                <button onclick="carregarJogo('https://www.crazygames.com/embed/subway-surfers', 'audio2')">Jogar</button>
             </div>
             <div class="card">
-                <img src="https://picsum.photos/200/120?3" alt="Jogo 3">
-                <h3>Quebra-Cabeça</h3>
-                <button onclick="alert('Abrindo Quebra-Cabeça...')">Jogar</button>
+                <img src="https://wallpapercave.com/wp/wp4883250.jpg">
+                <h3>Geometry Dash</h3>
+                <button onclick="carregarJogo('https://www.crazygames.com/embed/geometry-dash', 'audio3')">Jogar</button>
             </div>
         </div>
+
         <button class="voltar" onclick="mostrarTela('inicio')">Sair</button>
     </section>
 
-    <script src="jogo.js"></script>
+    <!-- Tela Carregamento -->
+    <section id="loading" class="tela">
+        <h2>Carregando...</h2>
+        <div class="spinner"></div>
+    </section>
+
+    <!-- Tela do Jogo -->
+    <section id="telaJogo" class="tela">
+        <iframe id="iframeJogo" allow="fullscreen"></iframe>
+        <button class="voltar" onclick="pararAudio();mostrarTela('jogos')">Voltar</button>
+    </section>
+
+    <!-- Sons exclusivos -->
+    <audio id="audio1" src="https://www.fesliyanstudios.com/play-mp3/387"></audio>
+    <audio id="audio2" src="https://www.fesliyanstudios.com/play-mp3/6736"></audio>
+    <audio id="audio3" src="https://www.fesliyanstudios.com/play-mp3/6850"></audio>
+
+<script src="jogo.js"></script>
 </body>
 </html>

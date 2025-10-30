@@ -1,18 +1,58 @@
 function mostrarTela(tela) {
-    document.querySelectorAll('.tela').forEach(sec => sec.classList.remove('ativa'));
+    document.querySelectorAll('.tela').forEach(s => s.classList.remove('ativa'));
     document.getElementById(tela).classList.add('ativa');
 }
 
-function fazerLogin() {
-    const user = document.getElementById('usuario').value;
-    const pass = document.getElementById('senha').value;
-    const erro = document.getElementById('erroLogin');
+// Cadastro
+function fazerCadastro() {
+    let nome = document.getElementById('nomeCadastro').value;
+    let email = document.getElementById('emailCadastro').value;
+    let senha = document.getElementById('senhaCadastro').value;
+    let confSenha = document.getElementById('confirmSenhaCadastro').value;
+    let erro = document.getElementById('erroCadastro');
 
-    if (user === "Tauane" && pass === "0000") {
-        mostrarTela('jogos');
-        
-    } else {
-
-        erro.textContent = "Usuário ou senha inválidos!";
+    if (senha !== confSenha) {
+        erro.textContent = "As senhas não coincidem!";
+        return;
     }
+
+    localStorage.setItem("email", email);
+    localStorage.setItem("senha", senha);
+    mostrarTela('login');
+}
+
+// Login
+function fazerLogin() {
+    let email = document.getElementById('usuarioLogin').value;
+    let senha = document.getElementById('senhaLogin').value;
+    let erro = document.getElementById('erroLogin');
+
+    if (email === "Tauane" &&
+        senha === "0000") {
+        mostrarTela('jogos');
+    } else {
+        erro.textContent = "Email ou senha incorretos!";
+    }
+}
+
+let audioAtual = null;
+
+// Abrir jogo com som e loading
+function carregarJogo(url, audioId) {
+    mostrarTela('loading');
+
+    if (audioAtual) audioAtual.pause();
+
+    audioAtual = document.getElementById(audioId);
+    audioAtual.currentTime = 0;
+    audioAtual.play();
+
+    setTimeout(() => {
+        document.getElementById("iframeJogo").src = url;
+        mostrarTela("telaJogo");
+    }, 2000);
+}
+
+function pararAudio() {
+    if (audioAtual) audioAtual.pause();
 }

@@ -1,7 +1,7 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1a1a1d, #4e4e50);
+    background: linear-gradient(135deg, #0a0014, #4b007d);
     color: #fff;
     display: flex;
     justify-content: center;
@@ -11,93 +11,71 @@ body {
 
 .tela {
     display: none;
+    width: 90%;
+    max-width: 800px;
+    background: #1a0033;
     text-align: center;
-    max-width: 400px;
     padding: 20px;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    border-radius: 10px;
+    box-shadow: 0 0 15px #a100ff;
 }
 
-.tela.ativa {
-    display: block;
-}
-
-h1, h2 {
-    margin-bottom: 20px;
-}
+.tela.ativa { display: block; }
 
 button {
-    background-color: #ff5722;
+    background: #7c00d4;
+    padding: 12px 24px;
     border: none;
-    padding: 10px 20px;
-    color: white;
     cursor: pointer;
-    font-size: 16px;
-    border-radius: 6px;
-    transition: 0.3s;
+    border-radius: 8px;
+    margin-top: 10px;
+    color: #fff;
 }
-
-button:hover {
-    background-color: #e64a19;
-}
+button:hover { background: #c300ff; }
 
 input {
-    display: block;
-    margin: 10px auto;
+    width: 90%;
     padding: 10px;
-    width: 80%;
-    border: none;
+    margin: 8px 0;
     border-radius: 6px;
-    font-size: 16px;
-}
-
-.voltar {
-    margin-top: 15px;
-    background-color: #666;
+    border: none;
 }
 
 .lista-jogos {
     display: flex;
-    flex-wrap: wrap;
+    gap: 20px;
     justify-content: center;
-    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .card {
-    background-color: #2b2b2b;
-    border-radius: 8px;
+    background: #2b0050;
     width: 180px;
     padding: 10px;
-    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #9500ff;
 }
-
 .card img {
     width: 100%;
-    border-radius: 5px;
+    border-radius: 6px;
 }
 
-#erroLogin {
-    color: red;
-    font-size: 14px;
-    margin-top: 5px;
+#iframeJogo {
+    width: 100%;
+    height: 450px;
+    border: none;
+    margin: 15px 0;
 }
 
-function mostrarTela(tela) {
-    document.querySelectorAll('.tela').forEach(sec => sec.classList.remove('ativa'));
-    document.getElementById(tela).classList.add('ativa');
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #fff;
+    border-top: 5px solid #9a00ff;
+    border-radius: 50%;
+    margin: auto;
+    animation: girar 1s linear infinite;
 }
-
-function fazerLogin() {
-    const user = document.getElementById('usuario').value;
-    const pass = document.getElementById('senha').value;
-    const erro = document.getElementById('erroLogin');
-
-    if (user === "Tauane" && pass === "0000") {
-        mostrarTela('jogos');
-        window.location.href='teste.html';
-    } else {
-
-        erro.textContent = "Usuário ou senha inválidos!";
-    }
+@keyframes girar {
+    to { transform: rotate(360deg); }
 }

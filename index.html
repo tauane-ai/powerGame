@@ -1,84 +1,245 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PowerGame</title>
-    <link rel="stylesheet" href="jogo.css">
+<meta charset="UTF-8">
+<title>Jogo da Velha</title>
+
+<style>
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: #fafafa;
+        font-family: Arial, sans-serif;
+    }
+
+    h1 { margin-bottom: 10px; }
+
+    .modo {
+        margin-bottom: 20px;
+        font-size: 18px;
+    }
+
+    .board {
+        display: grid;
+        grid-template-columns: repeat(3, 120px);
+        grid-template-rows: repeat(3, 120px);
+        gap: 5px;
+        position: relative;
+    }
+
+    .cell {
+        width: 120px;
+        height: 120px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 60px;
+        cursor: pointer;
+        border: 2px solid #000;
+        user-select: none;
+    }
+
+    .cell:hover {
+        background: #e6e6e6;
+    }
+
+    /* LINHA DA VITÓRIA – mais fina */
+    #winLine {
+        position: absolute;
+        height: 3px;
+        background: red;
+        width: 0;
+        transform-origin: 0 0;
+        transition: 0.4s ease;
+        pointer-events: none;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
 </head>
 <body>
 
-    <!-- Tela Inicial -->
-    <section id="inicio" class="tela ativa">
-        <h1>🎮 PowerGame</h1>
-        <button onclick="mostrarTela('login')">Entrar</button>
-        <button onclick="mostrarTela('cadastro')">Cadastrar</button>
-    </section>
+<h1>Jogo da Velha</h1>
 
-    <!-- Tela de Cadastro -->
-    <section id="cadastro" class="tela">
-        <h2>Cadastro</h2>
-        <input type="text" id="nomeCadastro" placeholder="Nome completo">
-        <input type="email" id="emailCadastro" placeholder="Email">
-        <input type="password" id="senhaCadastro" placeholder="Senha">
-        <input type="password" id="confirmSenhaCadastro" placeholder="Confirmar senha">
-        <p id="erroCadastro"></p>
-        <button onclick="fazerCadastro()">Criar Conta</button>
-        <button class="voltar" onclick="mostrarTela('inicio')">Voltar</button>
-    </section>
+<div class="modo">
+    <label><input type="radio" name="modo" value="2p" checked> 2 Jogadores</label>
+    <label><input type="radio" name="modo" value="bot"> Jogar contra Robô</label>
+</div>
 
-    <!-- Tela de Login -->
-    <section id="login" class="tela">
-        <h2>Login</h2>
-        <input type="email" id="usuarioLogin" placeholder="Email">
-        <input type="password" id="senhaLogin" placeholder="Senha">
-        <p id="erroLogin"></p>
-        <button onclick="fazerLogin()">Acessar</button>
-        <button class="voltar" onclick="mostrarTela('inicio')">Voltar</button>
-    </section>
+<div class="board" id="board">
+    <div class="cell" data-id="0"></div>
+    <div class="cell" data-id="1"></div>
+    <div class="cell" data-id="2"></div>
+    <div class="cell" data-id="3"></div>
+    <div class="cell" data-id="4"></div>
+    <div class="cell" data-id="5"></div>
+    <div class="cell" data-id="6"></div>
+    <div class="cell" data-id="7"></div>
+    <div class="cell" data-id="8"></div>
 
-    <!-- Tela de Jogos -->
-    <section id="jogos" class="tela">
-        <h2>Escolha seu Jogo</h2>
+    <div id="winLine"></div>
+</div>
 
-        <div class="lista-jogos">
-            <div class="card">
-                <img src="https://i.postimg.cc/3NQHqJx6/corrida.jpg">
-                <h3>Moto X3M</h3>
-                <button onclick="carregarJogo('https://www.crazygames.com/embed/moto-x3m', 'audio1')">Jogar</button>
-            </div>
-            <div class="card">
-                <img src="https://wallpapercave.com/wp/wp7150487.jpg">
-                <h3>Subway Surfers</h3>
-                <button onclick="carregarJogo('https://www.crazygames.com/embed/subway-surfers', 'audio2')">Jogar</button>
-            </div>
-            <div class="card">
-                <img src="https://wallpapercave.com/wp/wp4883250.jpg">
-                <h3>Geometry Dash</h3>
-                <button onclick="carregarJogo('https://www.crazygames.com/embed/geometry-dash', 'audio3')">Jogar</button>
-            </div>
-        </div>
+<button onclick="resetGame()">Reiniciar</button>
 
-        <button class="voltar" onclick="mostrarTela('inicio')">Sair</button>
-    </section>
+<script>
+const boardEl = document.getElementById("board");
+const cells = document.querySelectorAll(".cell");
+const line = document.getElementById("winLine");
 
-    <!-- Tela Carregamento -->
-    <section id="loading" class="tela">
-        <h2>Carregando...</h2>
-        <div class="spinner"></div>
-    </section>
+let board = ["", "", "", "", "", "", "", "", ""];
+let turn = "X";
+let gameOver = false;
 
-    <!-- Tela do Jogo -->
-    <section id="telaJogo" class="tela">
-        <iframe id="iframeJogo" allow="fullscreen"></iframe>
-        <button class="voltar" onclick="pararAudio();mostrarTela('jogos')">Voltar</button>
-    </section>
+const wins = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
 
-    <!-- Sons exclusivos -->
-    <audio id="audio1" src="https://www.fesliyanstudios.com/play-mp3/387"></audio>
-    <audio id="audio2" src="https://www.fesliyanstudios.com/play-mp3/6736"></audio>
-    <audio id="audio3" src="https://www.fesliyanstudios.com/play-mp3/6850"></audio>
+cells.forEach(cell => {
+    cell.onclick = () => {
+        if (gameOver) return;
 
-<script src="jogo.js"></script>
+        const i = cell.dataset.id;
+        if (board[i] !== "") return;
+
+        const modo = document.querySelector("input[name='modo']:checked").value;
+
+        board[i] = turn;
+        cell.textContent = turn;
+
+        const win = checkWin(turn);
+        if (win) {
+            showLine(win);
+
+            // Mensagem só após a linha aparecer completamente
+            setTimeout(() => {
+                alert("Parabéns pela vitória!");
+            }, 450);
+
+            gameOver = true;
+            return;
+        }
+
+        if (board.every(v => v !== "")) {
+            alert("Empate!");
+            return;
+        }
+
+        turn = turn === "X" ? "O" : "X";
+
+        if (modo === "bot" && turn === "O") {
+            setTimeout(botPlay, 300);
+        }
+    }
+});
+
+function checkWin(p) {
+    for (let pattern of wins) {
+        if (pattern.every(i => board[i] === p)) return pattern;
+    }
+    return null;
+}
+
+function showLine(pattern) {
+    const pos = {
+        0:[0,0],1:[1,0],2:[2,0],
+        3:[0,1],4:[1,1],5:[2,1],
+        6:[0,2],7:[1,2],8:[2,2]
+    };
+
+    const [a,b,c] = pattern;
+    const start = pos[a];
+    const end = pos[c];
+
+    const x1 = start[0] * 125 + 60;
+    const y1 = start[1] * 125 + 60;
+    const x2 = end[0] * 125 + 60;
+    const y2 = end[1] * 125 + 60;
+
+    const length = Math.hypot(x2 - x1, y2 - y1);
+    const angle = Math.atan2(y2 - y1, x2 - x1) * 180/Math.PI;
+
+    line.style.left = x1 + "px";
+    line.style.top = y1 + "px";
+    line.style.width = length + "px";
+    line.style.transform = `rotate(${angle}deg)`;
+}
+
+function resetGame() {
+    board = ["","","","","","","","",""];
+    turn = "X";
+    gameOver = false;
+    line.style.width = "0px";
+    cells.forEach(c => c.textContent = "");
+}
+
+/* IA FORTALECIDA */
+function botPlay() {
+    const best = minimax(board, "O").index;
+
+    board[best] = "O";
+    cells[best].textContent = "O";
+
+    const win = checkWin("O");
+    if (win) {
+        showLine(win);
+        setTimeout(() => {
+            alert("Parabéns pela vitória!");
+        }, 450);
+        gameOver = true;
+        return;
+    }
+
+    if (board.every(v => v !== "")) {
+        alert("Empate!");
+        return;
+    }
+
+    turn = "X";
+}
+
+function minimax(newBoard, player) {
+    const avail = newBoard.map((v,i)=>v===""?i:null).filter(v=>v!==null);
+
+    if (winner(newBoard, "X")) return {score: -10};
+    if (winner(newBoard, "O")) return {score: 10};
+    if (avail.length === 0) return {score: 0};
+
+    const moves = [];
+
+    for (let i of avail) {
+        const move = {};
+        move.index = i;
+        newBoard[i] = player;
+
+        move.score = player === "O"
+        ? minimax(newBoard, "X").score
+        : minimax(newBoard, "O").score;
+
+        newBoard[i] = "";
+        moves.push(move);
+    }
+
+    return player === "O"
+    ? moves.reduce((a,b)=>a.score > b.score ? a : b)
+    : moves.reduce((a,b)=>a.score < b.score ? a : b);
+}
+
+function winner(b,p) {
+    return wins.some(pattern => pattern.every(i => b[i] === p));
+}
+</script>
+
 </body>
 </html>
